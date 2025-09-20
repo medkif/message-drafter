@@ -1,0 +1,4 @@
+requests
+translate
+python-dotenv
+openai
