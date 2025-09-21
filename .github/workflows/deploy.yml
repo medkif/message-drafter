@@ -1,8 +1,11 @@
 name: Deploy to Cloud Run
 
+
 on:
   push:
-    branches: [ "master","feature/*" ]
+    branches:
+      - main
+      - feature/*
 
 jobs:
   deploy:
