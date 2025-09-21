@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - 'feature/*'
 
 jobs:
   deploy:
@@ -24,8 +25,8 @@ jobs:
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v2
       with:
-        service_account: "${{ env.SERVICE_ACCOUNT }}"
-        workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+        service_account: "958912656566-compute@developer.gserviceaccount.com"
+        workload_identity_provider: "projects/958912656566/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
         create_credentials_file: true
     
     - name: Set up gcloud
