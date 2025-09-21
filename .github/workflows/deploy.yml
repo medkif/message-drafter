@@ -50,5 +50,4 @@ jobs:
         IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
         gcloud run jobs deploy daily-could-run-job \
           --image $IMAGE \
-          --region us-central1 \
-          --platform managed
+          --region us-central1
