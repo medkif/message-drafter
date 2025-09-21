@@ -36,9 +36,12 @@ jobs:
       with:
         project_id: "${{ env.PROJECT_ID }}"
 
+    - name: Configure Docker
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
     - name: Build Docker image
       run: |
-        IMAGE="gcr.io/${{ env.PROJECT_ID }}/my-job:${GITHUB_SHA}"
+        IMAGE="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
         docker build -t $IMAGE .
         docker push $IMAGE
 
