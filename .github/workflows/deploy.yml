@@ -15,7 +15,7 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
-      SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      SERVICE_ACCOUNT: ${{ secrets.GCP_SA }}
 
     steps:
       - name: Checkout
