@@ -1,7 +1,6 @@
-import subprocess, requests
+import subprocess, requests, urllib.parse, ollama
 from openai import OpenAI
 from translate import Translator
-import urllib.parse
 
 
 def ollama_local(prompt:str) -> str:
