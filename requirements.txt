@@ -2,3 +2,5 @@ requests
 translate
 python-dotenv
 openai
+ollama
+python-dotenv

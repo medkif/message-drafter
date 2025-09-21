@@ -36,10 +36,11 @@ jobs:
       with:
         project_id: "${{ env.PROJECT_ID }}"
 
-    - name: Build and push Docker image
+    - name: Build Docker image
       run: |
-        IMAGE="gcr.io/probable-axon-470020-t0/my-jo"
-        gcloud builds submit --tag $IMAGE .
+        IMAGE="gcr.io/${{ env.PROJECT_ID }}/my-job:${GITHUB_SHA}"
+        docker build -t $IMAGE .
+        docker push $IMAGE
 
     - name: Deploy to Cloud Run
       run: |
