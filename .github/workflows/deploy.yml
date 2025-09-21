@@ -37,17 +37,17 @@ jobs:
         project_id: "${{ env.PROJECT_ID }}"
 
     - name: Configure Docker
-      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+      run: gcloud auth configure-docker us-docker.pkg.dev
 
     - name: Build Docker image
       run: |
-        IMAGE="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
+        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
         docker build -t $IMAGE .
         docker push $IMAGE
 
     - name: Deploy to Cloud Run
       run: |
-        IMAGE="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
+        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
         gcloud run jobs deploy daily-could-run-job \
           --image $IMAGE \
           --region us-central1 \
