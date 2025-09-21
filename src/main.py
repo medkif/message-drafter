@@ -4,12 +4,12 @@ from utilities import translate_to_swe,send_to_telegram
 
 if __name__ == "__main__":
 
-    # Load env secrets
-    load_dotenv('../../secrets.env')
+    # Try to load .env file if it exists (local dev)
+    load_dotenv('../secrets.env')
+
     # Will be gotten from GitHub Secrets
     BOT_TOKEN = os.getenv('BOT_TOKEN') # Telegram bot token
     CHAT_ID   = os.getenv('CHAT_ID') # Telegram chat ID
-    OPENAI_API_TOKEN  = os.getenv('API_TOKEN')
     
     # Prompt
     prompt = """
