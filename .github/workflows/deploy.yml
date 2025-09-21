@@ -51,3 +51,22 @@ jobs:
         gcloud run jobs deploy daily-could-run-job-deployed \
           --image $IMAGE \
           --region us-central1
+
+    - name: Create or Update Cloud Scheduler Job
+      run: |
+        # Try to create the job; if it exists, update it instead
+        gcloud scheduler jobs create http trigger_cloud_run_job \
+          --schedule="0 12 * * *" \
+          --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run" \
+          --http-method=POST \
+          --time-zone="Europe/Stockholm" \
+          --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+          --location=us-central1
+        ||
+        gcloud scheduler jobs update http trigger_cloud_run_job \
+          --schedule="0 12 * * *" \
+          --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run" \
+          --http-method=POST \
+          --time-zone="Europe/Stockholm" \
+          --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+          --location=us-central1
