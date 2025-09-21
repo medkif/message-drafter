@@ -54,19 +54,21 @@ jobs:
 
     - name: Create or Update Cloud Scheduler Job
       run: |
-        # Try to create the job; if it exists, update it instead
-        gcloud scheduler jobs create http trigger_cloud_run_job-deployed \
-          --schedule="0 12 * * *" \
-          --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run" \
-          --http-method=POST \
-          --time-zone="Europe/Stockholm" \
-          --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
-          --location=us-central1
-        ||
-        gcloud scheduler jobs update http trigger_cloud_run_job-deployed \
-          --schedule="0 12 * * *" \
-          --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run" \
-          --http-method=POST \
-          --time-zone="Europe/Stockholm" \
-          --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
-          --location=us-central1
+        JOB_NAME="trigger_cloud_run_job-deployed"
+        JOB_URI="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run"
+
+        if ! gcloud scheduler jobs create http $JOB_NAME \
+            --schedule="0 12 * * *" \
+            --uri="$JOB_URI" \
+            --http-method=POST \
+            --time-zone="Europe/Stockholm" \
+            --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+            --location=us-central1; then
+          gcloud scheduler jobs update http $JOB_NAME \
+            --schedule="0 12 * * *" \
+            --uri="$JOB_URI" \
+            --http-method=POST \
+            --time-zone="Europe/Stockholm" \
+            --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+            --location=us-central1
+        fi
