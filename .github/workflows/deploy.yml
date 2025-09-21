@@ -9,8 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write   # Required for OIDC
-      contents: read
+      id-token: 'write'   # Required for OIDC
+      contents: 'read'
 
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -21,16 +21,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          project_id: "${{ env.PROJECT_ID }}"
+
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: "${{ env.PROJECT_ID }}"
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          token_format: access_token
-          workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-          service_account: "${{ env.SERVICE_ACCOUNT }}"
 
       - run: gcloud projects list
