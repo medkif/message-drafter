@@ -1,16 +1,20 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 from utilities import translate_to_swe,send_to_telegram
 
 if __name__ == "__main__":
 
     # Try to load .env file if it exists (local dev)
-    load_dotenv('../secrets.env')
-
-    # Will be gotten from GitHub Secrets
+    # Otherwise, will be gotten from GitHub Secrets
+    env_path = Path(__file__).resolve().parent.parent / "secrets.env"
+    if env_path.exists():
+        load_dotenv(env_path)
     BOT_TOKEN = os.getenv('BOT_TOKEN') # Telegram bot token
     CHAT_ID   = os.getenv('CHAT_ID') # Telegram chat ID
-    
+    if not BOT_TOKEN or not CHAT_ID:
+        raise RuntimeError("Missing BOT_TOKEN or CHAT_ID. Make sure env vars are set.")
+
     # Prompt
     prompt = """
     Write a short greeting that is going to be sent on Messenger.
