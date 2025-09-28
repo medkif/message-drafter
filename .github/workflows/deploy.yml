@@ -19,6 +19,8 @@ jobs:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
       SERVICE_ACCOUNT: ${{ secrets.GCP_SA }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
 
     steps:
     - name: Checkout Repo
@@ -32,9 +34,11 @@ jobs:
         create_credentials_file: true
     
     - name: Set up gcloud
-      uses: google-github-actions/setup-gcloud@v2
+      uses: google-github-actions/setup-gcloud@v3
       with:
+        version: '>= 363.0.0'
         project_id: "${{ env.PROJECT_ID }}"
+    
 
     - name: Configure Docker
       run: gcloud auth configure-docker us-docker.pkg.dev
@@ -51,8 +55,8 @@ jobs:
         gcloud run jobs deploy daily-could-run-job-deployed \
           --image $IMAGE \
           --region us-central1 \ 
-          --set-env-vars BOT_TOKEN=${{ secrets.BOT_TOKEN }},CHAT_ID=${{ secrets.CHAT_ID }}
-
+          --set-env-vars BOT_TOKEN=${{ env.BOT_TOKEN }} \ 
+          --set-env-vars CHAT_ID=${{ env.CHAT_ID }}
 
     - name: Create or Update Cloud Scheduler Job
       run: |
