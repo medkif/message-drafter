@@ -36,7 +36,7 @@ jobs:
     - name: Set up gcloud
       uses: google-github-actions/setup-gcloud@v3
       with:
-        version: '>= 363.0.0'
+        version: '>= 535.0.0'
         project_id: "${{ env.PROJECT_ID }}"
     
 
