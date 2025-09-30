@@ -21,19 +21,31 @@ def ollama_api(prompt:str,model='llama3') -> str:
     completion=result["message"]["content"].strip()
     return completion
 
-def openai_api(prompt:str, api_key:str) -> str:
-    client = OpenAI(api_key)
+def openai_chat_completion(api_key:str) -> str:
+    client = OpenAI(api_key=api_key)
+    # Prompt
+    prompt = """
+    Write a short greeting that is going to be sent on Messenger.
+    - Start the message with Tja (swedish slang).
+    - Be easy going, concrete and articulated. 
+    - Finish with a simple question.
+    - Do not seek to hangout or setup a call.
+    - Only write 1 to 3 sentences.
+    - Only write the message, no other text.
+    - Do not include quotes.
+    """
+
     try:
         draft = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a message drafter. Your job is to help me connect with my friend."},
+                {"role": "system", "content": "You are a message drafter. Your job is to help people connect with their friends by drafting friendly messages."},
                 {"role": "user", "content": prompt}
             ]
         )
     except:
         raise Exception("Something went wrong with OpenAI API.")
-    return draft
+    return draft.choices[0].message.content.strip()
 
 def pollinations_api(prompt:str) -> str:
     # Generate
