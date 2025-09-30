@@ -21,6 +21,7 @@ jobs:
       SERVICE_ACCOUNT: ${{ secrets.GCP_SA }}
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       CHAT_ID: ${{ secrets.CHAT_ID }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
     - name: Checkout Repo
@@ -56,7 +57,8 @@ jobs:
           --image $IMAGE \
           --region us-central1 \
           --set-env-vars BOT_TOKEN=${{ env.BOT_TOKEN }} \
-          --set-env-vars CHAT_ID=${{ env.CHAT_ID }}
+          --set-env-vars CHAT_ID=${{ env.CHAT_ID }} \
+          --set-env-vars CHAT_ID=${{ env.OPENAI_API_KEY }}
 
     - name: Create or Update Cloud Scheduler Job
       run: |
