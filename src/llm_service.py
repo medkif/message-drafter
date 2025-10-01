@@ -1,27 +1,25 @@
-import subprocess, requests, urllib.parse, ollama
+import subprocess, ollama, os
+from dotenv import load_dotenv
+from pathlib import Path
 from openai import OpenAI
-from translate import Translator
 
-def ollama_local(prompt:str) -> str:
-    result = subprocess.run(
-        ["ollama", "run", "llama3"],  # input arguments to process
-        input=prompt.encode("utf-8"),
-        capture_output=True
-    )
-    return result.stdout.decode().strip()
-import ollama
+# Try to load .env file if it exists (local dev)
+# Otherwise, will be gotten from GitHub Secrets
+env_path = Path(__file__).resolve().parent.parent / "secrets.env"
+if env_path.exists():
+    load_dotenv(env_path)
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') # OpenAI API Key
 
-def ollama_api(prompt:str,model='llama3') -> str:
-    result = ollama.chat(
-        model=model,
-        messages=[{"role": "user", "content": prompt}]
-        )
-    
-    completion=result["message"]["content"].strip()
-    return completion
+if not OPENAI_API_KEY:
+    raise RuntimeError("Missing OPENAI_API_KEY. Make sure env vars are set.")
 
-def openai_chat_completion(api_key:str, recent_messages:list[str]) -> str:
-    client = OpenAI(api_key=api_key)
+# Module-level authentication to OpenAI
+try:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+except:
+    raise Exception("Error when connecting to OpenAI Client.")
+
+def openai_chat_completion(recent_messages:list[str]) -> str:
     # Prompt
     prompt = f"""
     Write a short greeting in swedish that is going to be sent on Messenger.
@@ -44,41 +42,23 @@ def openai_chat_completion(api_key:str, recent_messages:list[str]) -> str:
         )
     except:
         raise Exception("Something went wrong with OpenAI API.")
+    
     return draft.choices[0].message.content.strip()
 
-def pollinations_api(prompt:str) -> str:
-    # Generate
-    encoded_prompt = urllib.parse.quote(prompt)
-    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+def ollama_local(prompt:str) -> str:
+    result = subprocess.run(
+        ["ollama", "run", "llama3"],  # input arguments to process
+        input=prompt.encode("utf-8"),
+        capture_output=True
+    )
+    return result.stdout.decode().strip()
+import ollama
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status() # Raise an exception for bad status codes
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching text: {e}")
-        if response is not None: print("Response text:", response.text)
-    if response is not None: draft = response.text
-    return prompt
-
-def mlvoca_api(prompt:str) -> str:
-    try:
-        url = "https://mlvoca.com/api/generate"
-        payload = {
-            "model": "tinyllama",   # or "tinyllama"
-            "prompt": prompt,
-            "stream": False
-        }
-        resp = requests.post(url, json=payload, timeout=60)
-        draft=resp.json().get("response")
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching text: {e}")
-    return draft
-
-def translate_to_swe(input_text:str) -> str:
-    # Translate:
-    translation = Translator(to_lang="sv").translate(input_text)
-
-    # For testing:
-    print("Original text:\n"+input_text)
-    print(translation)
-    return translation
+def ollama_api(prompt:str,model='llama3') -> str:
+    result = ollama.chat(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+        )
+    
+    completion=result["message"]["content"].strip()
+    return completion

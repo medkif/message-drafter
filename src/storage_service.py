@@ -8,6 +8,7 @@ env_path = Path(__file__).resolve().parent.parent / "secrets.env"
 if env_path.exists():
     load_dotenv(env_path)
 PROJECT_ID     = os.getenv('PROJECT_ID') # GCP Project ID
+if not PROJECT_ID: raise RuntimeError("Missing PROJECT_ID. Make sure env vars are set.")
 
 # Module-level authentication to Firestore
 db = firestore.Client(project=PROJECT_ID)
