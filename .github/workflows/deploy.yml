@@ -58,7 +58,9 @@ jobs:
           --region us-central1 \
           --set-env-vars BOT_TOKEN=${{ env.BOT_TOKEN }} \
           --set-env-vars CHAT_ID=${{ env.CHAT_ID }} \
-          --set-env-vars OPENAI_API_KEY=${{ env.OPENAI_API_KEY }}
+          --set-env-vars OPENAI_API_KEY=${{ env.OPENAI_API_KEY }} \
+          --set-env-vars PROJECT_ID=${{ env.PROJECT_ID }}
+
 
     - name: Create or Update Cloud Scheduler Job
       run: |

@@ -20,17 +20,17 @@ def ollama_api(prompt:str,model='llama3') -> str:
     completion=result["message"]["content"].strip()
     return completion
 
-def openai_chat_completion(api_key:str) -> str:
+def openai_chat_completion(api_key:str, recent_messages:list[str]) -> str:
     client = OpenAI(api_key=api_key)
     # Prompt
-    prompt = """
-    Write a short greeting that is going to be sent on Messenger.
+    prompt = f"""
+    Write a short greeting in swedish that is going to be sent on Messenger.
     - Start the message with Tja (swedish slang).
     - Be easy going, concrete and articulated. 
     - Finish with a simple question.
     - Do not seek to hangout or setup a call.
     - Only write 1 to 3 sentences.
-    - Only write the message, no other text.
+    - avoid writing any of the previous messages: {recent_messages}
     - Do not include quotes.
     """
 

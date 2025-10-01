@@ -3,4 +3,5 @@ translate
 python-dotenv
 openai
 ollama
-python-dotenv
+google-cloud-firestore
+google-cloud-core
