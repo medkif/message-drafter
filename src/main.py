@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-from utilities import openai_chat_completion,translate_to_swe,send_to_telegram
+from llm_service import openai_chat_completion, translate_to_swe
+from chat_service import send_to_telegram
 
 if __name__ == "__main__":
 
