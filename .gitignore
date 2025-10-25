@@ -1,3 +1,68 @@
 *.env
 secrets.env
 probable-axon-470020-t0-795c9add3e17.json
+
+darwin_*/
+
+# ──────────────────────────────
+# 🌍 Terraform core files
+# ──────────────────────────────
+
+# Local Terraform state files
+terraform.tfstate
+terraform.tfstate.*
+
+# Crash logs (from failed applies)
+crash.log
+crash.*.log
+
+# Local-only variable files
+*.tfvars
+*.tfvars.json
+
+# Override and experiment files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local CLI config (stores credentials)
+.terraformrc
+terraform.rc
+
+# Local .terraform directory (modules/plugins)
+.terraform/
+
+# ──────────────────────────────
+# 🔐 Sensitive or user-specific data
+# ──────────────────────────────
+
+# Service account keys, creds, etc.
+*.pem
+*.key
+*.json
+*.p12
+*.crt
+
+# OS junk / editor cache
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Terraform Cloud credentials (if stored locally)
+.terraform.d/
+
+# Plan output files
+*.tfplan
+plan.out
+
+# Extra:
+.terraform.lock.hcl

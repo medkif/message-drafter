@@ -22,9 +22,15 @@ jobs:
       contents: 'read'
 
     env:
+      # Deployed Infrastructure:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
       SERVICE_ACCOUNT: ${{ secrets.GCP_SA }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      POOL_ID: ${{ secrets.POOL_ID }}                 # Workload Identity Federation
+      DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+
+      # App secrets:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       CHAT_ID: ${{ secrets.CHAT_ID }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -37,7 +43,7 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         service_account: "${{ env.SERVICE_ACCOUNT }}"
-        workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+        workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ env.POOL_ID }}/providers/github-provider"
         create_credentials_file: true
     
     - name: Set up gcloud
@@ -52,16 +58,16 @@ jobs:
 
     - name: Build Docker image
       run: |
-        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
+        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/my-job:${GITHUB_SHA}"
         docker build -t $IMAGE .
         docker push $IMAGE
 
     - name: Deploy to Cloud Run
       run: |
-        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/my-repo/my-job:${GITHUB_SHA}"
+        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/my-job:${GITHUB_SHA}"
         gcloud run jobs deploy daily-could-run-job-deployed \
           --image $IMAGE \
-          --region us-central1 \
+          --region ${{ env.GCP_REGION }} \
           --set-env-vars BOT_TOKEN=${{ env.BOT_TOKEN }} \
           --set-env-vars CHAT_ID=${{ env.CHAT_ID }} \
           --set-env-vars OPENAI_API_KEY=${{ env.OPENAI_API_KEY }} \
@@ -71,7 +77,7 @@ jobs:
     - name: Create or Update Cloud Scheduler Job
       run: |
         JOB_NAME="trigger_cloud_run_job-deployed"
-        JOB_URI="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run"
+        JOB_URI="https://${{ env.GCP_REGION }}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${{ env.PROJECT_ID }}/jobs/daily-could-run-job-deployed:run"
 
         if ! gcloud scheduler jobs create http $JOB_NAME \
             --schedule="0 12 * * *" \
@@ -79,12 +85,12 @@ jobs:
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
             --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
-            --location=us-central1; then
+            --location=${{ env.GCP_REGION }}; then
           gcloud scheduler jobs update http $JOB_NAME \
             --schedule="0 12 * * *" \
             --uri="$JOB_URI" \
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
             --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
-            --location=us-central1
+            --location=${{ env.GCP_REGION }}
         fi
