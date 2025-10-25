@@ -6,13 +6,13 @@ provider "google" {
 
 # Module for activating APIs in GCP
 module "apis" {
-  source = "../infra/gcp-iac/modules/apis"
+  source = "../../infra/gcp-iac/modules/apis"
   required_apis = var.required_apis
   project_id    = var.project_id
 }
 
 module "service_account" {
-  source             = "../infra/gcp-iac/modules/service_account"
+  source             = "../../infra/gcp-iac/modules/service_account"
   project_id         = var.project_id
   service_account_id = var.service_account_id
   user_email         = var.user_email
@@ -20,7 +20,7 @@ module "service_account" {
 }
 
 module "workload_identity" {
-  source                    = "../infra/gcp-iac/modules/workload_identity"
+  source                    = "../../infra/gcp-iac/modules/workload_identity"
   project_id                = var.project_id
   project_number            = var.project_number
   workload_identity_pool_id = var.workload_identity_pool_id
@@ -31,7 +31,7 @@ module "workload_identity" {
 }
 
 module "artifact_registry" {
-  source        = "../infra/gcp-iac/modules/artifact_registry"
+  source        = "../../infra/gcp-iac/modules/artifact_registry"
   repository_id = var.repository_id
   region        = var.region
   depends_on = [ module.apis ]
