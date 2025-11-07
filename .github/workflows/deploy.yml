@@ -10,8 +10,6 @@ on:
       - '*.md'
       - '*.txt'
       - '.gitignore'
-      - '.github/**'
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
