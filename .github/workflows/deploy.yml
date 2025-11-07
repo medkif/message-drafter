@@ -56,7 +56,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        IMAGE="us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/my-job:${GITHUB_SHA}"
+        IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/my-job:${GITHUB_SHA}"
         docker build -t $IMAGE .
         docker push $IMAGE
 
