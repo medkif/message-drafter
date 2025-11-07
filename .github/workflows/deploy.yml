@@ -52,7 +52,7 @@ jobs:
     
 
     - name: Configure Docker
-      run: gcloud auth configure-docker us-docker.pkg.dev
+      run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
     - name: Build Docker image
       run: |
