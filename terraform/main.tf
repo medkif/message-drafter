@@ -14,26 +14,11 @@ module "apis" {
 module "service_account" {
   source             = "../../infra/gcp-iac/modules/service_account"
   project_id         = var.project_id
-  project_number     = var.project_number
   service_account_id = var.service_account_id
   user_email         = var.user_email
   sa_roles           = var.sa_roles
+  depends_on = [ module.apis ]
 }
-
-# # gcloud iam service-accounts add-iam-policy-binding \
-# #   [PROJECT_NUMBER]-compute@developer.gserviceaccount.com \
-# #   --member="serviceAccount:YOUR_DEPLOYER_SA@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-# #   --role="roles/iam.serviceAccountUser"
-
-# # 1.1 Service Account User
-# resource "google_service_account_iam_binding" "admin_account_iam" {
-#   service_account_id = google_service_account.sa.name
-#   role               = "roles/iam.serviceAccountUser"
-
-#   members = [
-#     "serviceAccount:google_service_account.sa.email",
-#   ]
-# }
 
 module "workload_identity" {
   source                    = "../../infra/gcp-iac/modules/workload_identity"
