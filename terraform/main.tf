@@ -31,6 +31,16 @@ module "runtime_sa" {
   depends_on = [ module.apis ]
 }
 
+# Link accounts
+resource "google_service_account_iam_binding" "admin_account_iam" {
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${module.runtime_sa.service_account_email}"
+  role               = "roles/iam.serviceAccountUser"
+
+  members = ["serviceAccount:${module.deployer_sa.service_account_email}"] # deployer sa
+
+  depends_on = [ module.deployer_sa,module.runtime_sa ]
+}
+
 module "workload_identity" {
   source                    = "../../infra/gcp-iac/modules/workload_identity"
   project_id                = var.project_id
