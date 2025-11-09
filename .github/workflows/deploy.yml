@@ -23,7 +23,8 @@ jobs:
       # Deployed Infrastructure:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
-      SERVICE_ACCOUNT: ${{ secrets.GCP_SA }}
+      DEPLOYER_SA: ${{ secrets.GCP_DEPLOYER_SA }}     # Github Actions <--> GCP Authentication
+      RUNTIME_SA: ${{ secrets.GCP_RUNTIME_SA }}       # To be used in runtime (Cloud Run, Scheduler, etc) 
       GCP_REGION: ${{ secrets.GCP_REGION }}
       POOL_ID: ${{ secrets.POOL_ID }}                 # Workload Identity Federation
       DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
@@ -40,7 +41,7 @@ jobs:
     - name: Authenticate to GCP
       uses: google-github-actions/auth@v2
       with:
-        service_account: "${{ env.SERVICE_ACCOUNT }}"
+        service_account: "${{ env.DEPLOYER_SA }}"
         workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ env.POOL_ID }}/providers/github-provider"
         create_credentials_file: true
     
@@ -50,7 +51,6 @@ jobs:
         version: '>= 535.0.0'
         project_id: "${{ env.PROJECT_ID }}"
     
-
     - name: Configure Docker
       run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
@@ -66,7 +66,7 @@ jobs:
         gcloud run jobs deploy daily-could-run-job-deployed \
           --image $IMAGE \
           --region ${{ env.GCP_REGION }} \
-          --service-account ${{ env.SERVICE_ACCOUNT }} \
+          --service-account ${{ env.RUNTIME_SA }} \
           --set-env-vars BOT_TOKEN=${{ env.BOT_TOKEN }} \
           --set-env-vars CHAT_ID=${{ env.CHAT_ID }} \
           --set-env-vars OPENAI_API_KEY=${{ env.OPENAI_API_KEY }} \
@@ -83,13 +83,13 @@ jobs:
             --uri="$JOB_URI" \
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
-            --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+            --oauth-service-account-email=${{ env.RUNTIME_SA }} \
             --location=${{ env.GCP_REGION }}; then
           gcloud scheduler jobs update http $JOB_NAME \
             --schedule="0 12 * * *" \
             --uri="$JOB_URI" \
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
-            --oauth-service-account-email=${{ env.SERVICE_ACCOUNT }} \
+            --oauth-service-account-email=${{ env.RUNTIME_SA }} \
             --location=${{ env.GCP_REGION }}
         fi
