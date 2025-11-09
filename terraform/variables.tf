@@ -18,7 +18,12 @@ variable "region" {
 variable "user_email" {
   type = string
 }
-variable "service_account_id" {
+variable "id_github_sa" {
+  description = "ID of Service Account used to in Github Actions."
+  type = string
+}
+variable "id_runtime_sa" {
+  description = "ID of Service Account used in runtime of Cloud Run Job."
   type = string
 }
 variable "repository_id" {

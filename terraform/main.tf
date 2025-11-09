@@ -11,10 +11,20 @@ module "apis" {
   project_id    = var.project_id
 }
 
-module "service_account" {
+# Deployer SA
+module "deployer_sa" {
   source             = "../../infra/gcp-iac/modules/service_account"
   project_id         = var.project_id
-  service_account_id = var.service_account_id
+  service_account_id = var.id_github_sa
+  user_email         = var.user_email
+  depends_on = [ module.apis ]
+}
+
+# Runtime SA
+module "runtime_sa" {
+  source             = "../../infra/gcp-iac/modules/service_account"
+  project_id         = var.project_id
+  service_account_id = var.id_runtime_sa
   user_email         = var.user_email
   sa_roles           = var.sa_roles
   depends_on = [ module.apis ]
@@ -27,8 +37,8 @@ module "workload_identity" {
   workload_identity_pool_id = var.workload_identity_pool_id
   github_owner              = var.github_owner
   github_repo               = var.github_repo
-  service_account_email     = module.service_account.service_account_email
-  depends_on = [ module.service_account, module.apis]
+  service_account_email     = module.deployer_sa.service_account_email
+  depends_on = [ module.deployer_sa, module.apis]
 }
 
 module "artifact_registry" {

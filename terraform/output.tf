@@ -7,11 +7,11 @@ output "project_number" {
 output "region" {
   value = var.region
 }
-output "service_account_id" {
-  value = var.service_account_id
+output "id_deployer_sa" {
+  value = var.id_github_sa
 }
-output "service_account_email" {
-  value = module.service_account.service_account_email
+output "deployer_email" {
+  value = module.deployer_sa.service_account_email
 }
 output "repository_id" {
   value = var.repository_id
