@@ -44,3 +44,6 @@ variable "github_owner" {
 variable "github_repo" {
   type = string
 }
+variable "firestore_db_name" {
+  type = string
+}

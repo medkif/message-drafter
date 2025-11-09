@@ -58,3 +58,10 @@ module "artifact_registry" {
   region        = var.region
   depends_on = [ module.apis ]
 }
+
+module "firestore_db" {
+  source            = "../../infra/gcp-iac/modules/firestore"
+  project_id        = var.project_id
+  firestore_db_name = var.firestore_db_name
+  region            = var.region
+}
