@@ -28,6 +28,7 @@ jobs:
       GCP_REGION: ${{ secrets.GCP_REGION }}
       POOL_ID: ${{ secrets.POOL_ID }}                 # Workload Identity Federation
       DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+      SCHEDULER_REGION: ${{ secrets.SCHEDULER_REGION }}
 
       # App secrets:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -84,12 +85,12 @@ jobs:
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
             --oauth-service-account-email=${{ env.RUNTIME_SA }} \
-            --location=${{ env.GCP_REGION }}; then
+            --location=${{ env.SCHEDULER_REGION }}; then
           gcloud scheduler jobs update http $JOB_NAME \
             --schedule="0 12 * * *" \
             --uri="$JOB_URI" \
             --http-method=POST \
             --time-zone="Europe/Stockholm" \
             --oauth-service-account-email=${{ env.RUNTIME_SA }} \
-            --location=${{ env.GCP_REGION }}
+            --location=${{ env.SCHEDULER_REGION }}
         fi
