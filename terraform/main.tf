@@ -17,6 +17,7 @@ module "deployer_sa" {
   project_id         = var.project_id
   service_account_id = var.id_github_sa
   user_email         = var.user_email
+  sa_roles           = var.deployer_sa_roles
   depends_on = [ module.apis ]
 }
 
@@ -26,7 +27,7 @@ module "runtime_sa" {
   project_id         = var.project_id
   service_account_id = var.id_runtime_sa
   user_email         = var.user_email
-  sa_roles           = var.sa_roles
+  sa_roles           = var.runtime_sa_roles
   depends_on = [ module.apis ]
 }
 

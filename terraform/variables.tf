@@ -8,8 +8,12 @@ variable "required_apis" {
   description = "List of APIs to enable for the project"
   type        = list(string)
 }
-variable "sa_roles" {
-  description = "List of roles to give the Service Account(s)"
+variable "deployer_sa_roles" {
+  description = "List of roles to give the Deployer SA"
+  type = list(string)
+}
+variable "runtime_sa_roles" {
+  description = "List of roles to give the Runtime SA"
   type = list(string)
 }
 variable "region" {

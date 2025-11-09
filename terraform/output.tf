@@ -13,6 +13,9 @@ output "id_deployer_sa" {
 output "deployer_email" {
   value = module.deployer_sa.service_account_email
 }
+output "runner_email" {
+  value = module.runtime_sa.service_account_email
+}
 output "repository_id" {
   value = var.repository_id
 }
