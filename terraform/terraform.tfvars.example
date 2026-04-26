@@ -1,0 +1,54 @@
+# Example terraform.tfvars for Message Drafter.
+# Copy this file to terraform.tfvars and fill in your actual values.
+# See variables.tf for descriptions.
+
+# GCP project ID (must already exist)
+project_id     = "your-gcp-project-id"
+# GCP project number (find in GCP console)
+project_number = "your-gcp-project-number"
+
+# Your email (for IAM bindings, notifications, etc.)
+user_email   = "your-email@example.com"
+# GitHub owner/org (for CI/CD integration)
+github_owner = "your-github-username-or-org"
+# GitHub repository name
+github_repo  = "your-repo-name"
+
+# Required APIs to enable (do not change unless customizing infra)
+required_apis = [
+    "artifactregistry.googleapis.com", # Artifact Registry
+    "iam.googleapis.com",              # IAM
+    "compute.googleapis.com",          # Compute Engine (to fetch compute sa)
+    "run.googleapis.com",              # Cloud Run
+    "cloudbuild.googleapis.com",       # Cloud Build
+    "cloudscheduler.googleapis.com",   # Cloud Scheduler
+    "firestore.googleapis.com"         # Firestore
+]
+
+# Service account name for GitHub Actions (used for deployments)
+id_github_sa = "actions" # Change if you want a different name
+
+deployer_sa_roles = [
+    "roles/artifactregistry.writer", # Artifact Registry Writer (needs to create a repo)
+    "roles/cloudbuild.builds.editor",# Cloud Build Editor
+    "roles/run.admin",               # Cloud Run Admin
+    "roles/cloudscheduler.admin"     # Cloud Scheduler Admin
+]
+
+# Service account name for runtime (Cloud Run job)
+id_runtime_sa = "runner" # Change if you want a different name
+
+runtime_sa_roles = [
+    "roles/datastore.user",          # Cloud Datastore User
+    "roles/run.admin",               # Cloud Run Admin (needed for deployment (?))
+    "roles/cloudscheduler.jobRunner"
+]
+
+# GCP region for resources
+region = "europe-north1"
+# Artifact Registry repository ID
+repository_id = "my-docker-repo"
+# Workload Identity Federation pool ID
+workload_identity_pool_id = "pool"
+# Firestore database name (usually "(default)")
+firestore_db_name = "(default)"

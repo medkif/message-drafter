@@ -43,7 +43,7 @@ Message Drafter is a Python-based cloud-native project for generating and sendin
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 ---
 
-## Setup & Deployment
+## Step-by-Step Setup
 
 ### 1. Clone the repository
 ```sh
@@ -51,21 +51,48 @@ git clone https://github.com/medkif/message-drafter.git
 cd message-drafter
 ```
 
-### 2. Configure Environment Variables
-Create a `secrets.env` file in the root directory for local development:
+### 2. Set up Google Cloud Project
+- Create a new GCP project or use an existing one.
+- Enable the required APIs:
+  - Artifact Registry
+  - IAM
+  - Compute Engine
+  - Cloud Run
+  - Cloud Build
+  - Cloud Scheduler
+  - Firestore
+- Create a Firestore database in Native mode.
+
+### 3. Configure Terraform
+- Create a `terraform/terraform.tfvars` with your project details (use the .tfvars.ezample file).
+
+### 4. Initialize and Apply Terraform
+```sh
+cd terraform
+terraform init
+terraform apply
 ```
+- This will provision all required GCP resources.
+
+### 5. Set up GitHub Actions Secrets
+- In your GitHub repository, add the necessary secrets for CI/CD (see `.github/workflows/deploy.yml` for required secrets).
+- Typical secrets include GCP Workload Identity Federation configuration.
+
+### 6. Configure Local Environment
+- Create a `secrets.env` file in the project root:
+```env
 BOT_TOKEN=your-telegram-bot-token
 CHAT_ID=your-telegram-chat-id
 OPENAI_API_KEY=your-openai-api-key
 PROJECT_ID=your-gcp-project-id
 ```
 
-### 3. Install Python Dependencies
+### 7. Install Python Dependencies
 ```sh
 pip install -r requirements.txt
 ```
 
-### 4. Run Locally (for testing)
+### 8. Run Locally (for testing)
 ```sh
 python src/main.py
 ```
