@@ -41,11 +41,16 @@ resource "google_service_account_iam_binding" "admin_account_iam" {
   depends_on = [ module.deployer_sa,module.runtime_sa ]
 }
 
+# GCP waits before deleting so we can't create-recreate quickly enough.
+# To get around this, we use unique id per sesh.
+resource "random_id" "wip_suffix" {
+  byte_length = 4
+}
 module "workload_identity" {
   source                    = "../../infra/gcp-iac/modules/workload_identity"
   project_id                = var.project_id
   project_number            = var.project_number
-  workload_identity_pool_id = var.workload_identity_pool_id
+  workload_identity_pool_id = "pool-${random_id.wip_suffix.hex}"
   github_owner              = var.github_owner
   github_repo               = var.github_repo
   service_account_email     = module.deployer_sa.service_account_email
@@ -64,4 +69,5 @@ module "firestore_db" {
   project_id        = var.project_id
   firestore_db_name = var.firestore_db_name
   region            = var.region
+  depends_on = [ module.apis ]
 }

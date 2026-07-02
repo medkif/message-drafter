@@ -19,9 +19,10 @@ output "runner_email" {
 output "repository_id" {
   value = var.repository_id
 }
-output "workload_identity_pool_id" {
-  value = var.workload_identity_pool_id
+output "workload_identity_pool_name" {
+  value = module.workload_identity.workload_identity_pool_name
 }
+
 output "github_owner" {
   value = var.github_owner
 }

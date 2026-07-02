@@ -34,10 +34,10 @@ variable "repository_id" {
   description = "Artifact Registry Repository ID."
   type = string
 }
-variable "workload_identity_pool_id" {
-  description = "ID of the Github pool for Workload Identity Federation."
-  type = string
-}
+# variable "workload_identity_pool_id" {
+#   description = "ID of the Github pool for Workload Identity Federation."
+#   type = string
+# }
 variable "github_owner" {
   type = string
 }
