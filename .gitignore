@@ -1,6 +1,6 @@
 *.env
 secrets.env
-probable-axon-470020-t0-795c9add3e17.json
+.venv
 
 darwin_*/
 
