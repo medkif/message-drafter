@@ -68,7 +68,7 @@ def anthropic_chat_completion(recent_messages: list[str]) -> str:
 
     try:
         draft = client.messages.create(
-            model="claude-opus-4-8",
+            model="claude-sonnet-5",
             max_tokens=1024,
             system=SYSTEM_PROMPT,
             messages=[
