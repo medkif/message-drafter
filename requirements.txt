@@ -2,6 +2,7 @@ requests
 translate
 python-dotenv
 openai
+anthropic
 ollama
 google-cloud-firestore
 google-cloud-core
