@@ -2,11 +2,13 @@
 
 Message Drafter is a Python-based cloud-native project for generating and sending draft greetings to personal acquaintances on a schedule. It leverages Google Cloud Run, Firestore, Artifact Registry, and is fully managed via Infrastructure as Code (Terraform) and CI/CD pipelines (GitHub Actions).
 
+Each run generates a short, casual Swedish greeting (starting with the slang "Tja") using Claude, delivers it to a Telegram chat, and records it in Firestore so future drafts don't repeat recent messages.
+
 ---
 
 ## Features
-- **Automated Message Drafting:** Uses OpenAI to generate friendly greetings.
-- **Scheduled Delivery:** Runs as a scheduled Cloud Run Job, triggered by Cloud Scheduler.
+- **Automated Message Drafting:** Uses Anthropic's Claude to generate short, friendly Swedish greetings.
+- **Scheduled Delivery:** Runs as a scheduled Cloud Run Job, triggered daily by Cloud Scheduler.
 - **Cloud-Native:** All infrastructure is provisioned via Terraform.
 - **CI/CD:** Automated build and deployment using GitHub Actions and Workload Identity Federation.
 - **Persistent Storage:** Stores sent drafts in Firestore to avoid repetition.
@@ -19,7 +21,7 @@ Message Drafter is a Python-based cloud-native project for generating and sendin
 ├── src/
 │   ├── main.py              # Entry point for the job
 │   ├── chat_service.py      # Telegram integration
-│   ├── llm_service.py       # LLM (OpenAI) integration
+│   ├── llm_service.py       # LLM (Anthropic Claude) integration
 │   └── storage_service.py   # Firestore integration
 ├── requirements.txt         # Python dependencies
 ├── Dockerfile               # Container definition
@@ -28,7 +30,7 @@ Message Drafter is a Python-based cloud-native project for generating and sendin
 │   ├── main.tf              # Main Terraform config
 │   ├── variables.tf         # Input variables
 │   ├── output.tf            # Outputs
-│   ├── terraform.tfvars     # Variable values (example)
+│   ├── terraform.tfvars.example  # Example variable values
 │   └── versions.tf          # Provider versions
 └── .github/workflows/       # GitHub Actions CI/CD
 ```
@@ -64,7 +66,7 @@ cd message-drafter
 - Create a Firestore database in Native mode.
 
 ### 3. Configure Terraform
-- Create a `terraform/terraform.tfvars` with your project details (use the .tfvars.ezample file).
+- Create a `terraform/terraform.tfvars` with your project details (copy from `terraform/terraform.tfvars.example`).
 
 ### 4. Initialize and Apply Terraform
 ```sh
@@ -83,8 +85,9 @@ terraform apply
 ```env
 BOT_TOKEN=your-telegram-bot-token
 CHAT_ID=your-telegram-chat-id
-OPENAI_API_KEY=your-openai-api-key
+ANTHROPIC_API_KEY=your-anthropic-api-key
 PROJECT_ID=your-gcp-project-id
+DB_NAME=your-firestore-database-id
 ```
 
 ### 7. Install Python Dependencies
@@ -115,27 +118,26 @@ terraform apply
 ---
 
 ## CI/CD (GitHub Actions)
-- On push to `master` or `feature/*`, the workflow in `.github/workflows/deploy.yml`:
+- On push to `master` or `feature/*` (ignoring `*.md`, `*.txt`, and `.gitignore` changes), or via manual `workflow_dispatch`, the workflow in `.github/workflows/deploy.yml`:
   - Authenticates to GCP using Workload Identity Federation
-  - Builds and pushes Docker image to Artifact Registry
-  - Deploys to Cloud Run Job
-  - Schedules the job with Cloud Scheduler
+  - Builds and pushes the Docker image to Artifact Registry
+  - Deploys the Cloud Run Job (`daily-could-run-job-deployed`) with the required environment variables
+  - Creates or updates a Cloud Scheduler job that triggers the run daily at 12:00 `Europe/Stockholm`
 
 Secrets are managed in GitHub repository settings.
 
 ---
 
 ## Usage
-- The job fetches recent drafts from Firestore, generates a new greeting using OpenAI, sends it to Telegram, and stores the new draft.
-- To trigger manually, run `python src/main.py` locally (with `secrets.env` set).
+- The job fetches the 5 most recent drafts from the Firestore `drafts` collection, generates a new Swedish greeting with Claude (avoiding recent messages), sends it to Telegram, and stores the new draft.
+- To trigger manually, run `python src/main.py` locally (with `secrets.env` set), or use the **Run workflow** button on the GitHub Actions workflow.
 
 ---
 
 ## Extending & Testing
-- Add new message logic in `llm_service.py`.
+- Adjust the prompt or model in `llm_service.py` (currently uses `claude-sonnet-4-6`).
 - Change chat integration in `chat_service.py`.
 - Add more storage backends in `storage_service.py`.
-- For local LLM, use the `ollama_local` or `ollama_api` functions.
 
 ---
 
