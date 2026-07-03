@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from google.cloud import firestore
-from datetime import datetime
+from datetime import datetime, timezone
 
 env_path = Path(__file__).resolve().parent.parent / "secrets.env"
 if env_path.exists():
@@ -20,7 +20,7 @@ def save_draft(collection_name:str, text: str):
     doc_ref = db.collection(collection_name).document()
     doc_ref.set({
         "text": text,
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(timezone.utc)
     })
 
 def fetch_recent_drafts(collection_name:str,n: int = 5) -> list[str]:
