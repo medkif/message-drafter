@@ -7,11 +7,13 @@ from datetime import datetime
 env_path = Path(__file__).resolve().parent.parent / "secrets.env"
 if env_path.exists():
     load_dotenv(env_path)
-PROJECT_ID     = os.getenv('PROJECT_ID') # GCP Project ID
+PROJECT_ID = os.getenv('PROJECT_ID') # GCP Project ID
+DB_NAME    = os.getenv('DB_NAME') # Firestore db id
 if not PROJECT_ID: raise RuntimeError("Missing PROJECT_ID. Make sure env vars are set.")
+if not DB_NAME: raise RuntimeError("Missing DB_NAME. Make sure env vars are set.")
 
 # Module-level authentication to Firestore
-db = firestore.Client(project=PROJECT_ID)
+db = firestore.Client(project=PROJECT_ID,database=DB_NAME)
 
 def save_draft(collection_name:str, text: str):
     """Save a draft message into Firestore"""
