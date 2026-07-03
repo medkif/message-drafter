@@ -1,15 +1,17 @@
 name: Deploy to Cloud Run
 
 on:
+  workflow_dispatch:
+
   push:
     branches:
       - master
       - feature/*
-
     paths-ignore:
       - '*.md'
       - '*.txt'
       - '.gitignore'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
