@@ -48,7 +48,7 @@ def openai_chat_completion(recent_messages:list[str]) -> str:
 
 def anthropic_chat_completion(recent_messages: list[str]) -> str:
     ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
-    if not ANTHROPIC_API_KEY: raise RuntimeError("Missing OPENAI_API_KEY. Make sure env vars are set.")
+    if not ANTHROPIC_API_KEY: raise RuntimeError("Missing ANTHROPIC_API_KEY. Make sure env vars are set.")
     # Module-level authentication to Anthropic
     try:
         client = Anthropic(api_key=ANTHROPIC_API_KEY)
